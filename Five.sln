@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A40F350D-2E8B-40F7-AD6B-7DCCD7B4AD4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9D193F48-6D8B-42E8-B2C2-19A459086498}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+		Nuget.config = Nuget.config
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Five", "src\Five\Five.xproj", "{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A4DB4A70-D844-4E5F-8FE9-65286036B4CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D825BCB6-7AF5-4EE6-A3A2-DAEB7E1AE90C} = {A40F350D-2E8B-40F7-AD6B-7DCCD7B4AD4F}
+	EndGlobalSection
+EndGlobal

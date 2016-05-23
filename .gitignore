@@ -1,0 +1,26 @@
+
+artifacts/
+packages/
+doc/
+.vs/
+
+## Originally _bin_deployableAssemblies was excluded but we need it for SQL CE
+**/[Bb]in/
+**/[Oo]bj/
+
+*.suo
+*.swp
+
+project.lock.json
+*.xproj.user
+
+*.user
+*.[Cc]ache
+*.bak
+*.ncb
+*.log
+*.DS_Store
+
+## Node, npm, bower etc.
+node_modules/
+
