@@ -5,17 +5,11 @@ using Microsoft.Extensions.Logging;
 using Five.Managers;
 using Five.Models;
 using System;
-using AspNet.Security.OpenIdConnect.Server;
-using System.Threading.Tasks;
-using System.Security.Claims;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http.Authentication;
-using AspNet.Security.OpenIdConnect.Extensions;
-using Microsoft.Extensions.Options;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Five.Directives;
 
 namespace Five
 {
@@ -24,16 +18,17 @@ namespace Five
         public IConfigurationRoot Configuration { get; set; }
 
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            /// Note: hosting.json is auto-magically pulled in
+	public Startup(IHostingEnvironment env)
+	{
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
+        }
 
-
+        public void ConfigureServices(IServiceCollection services)
+        {
             /// Blogging uses Sqlite
             services
                 .AddEntityFrameworkSqlite()
@@ -51,11 +46,8 @@ namespace Five
             services.AddMvc();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
-            app.UseIISPlatformHandler();
-
-
             // Static File Suppport
             app.UseDefaultFiles(new DefaultFilesOptions
             {
@@ -93,82 +85,7 @@ namespace Five
                 options.AccessTokenLifetime = TimeSpan.FromDays(1);
                 options.AuthorizationCodeLifetime = TimeSpan.FromDays(1);
 
-                options.Provider = new OpenIdConnectServerProvider
-                {
-                    OnValidateTokenRequest = context =>
-                    {
-                        /// Skip since the resource server is embedded
-                        context.Skip();
-                        return Task.FromResult(0);
-                    },
-
-                    /// Populate the ticket always with the whom
-                    /// the request is from (i.e. user) then depending
-                    /// on the scopes extra info.  jwt.io can help
-                    /// unravel a JWT token.
-                    OnGrantResourceOwnerCredentials = context =>
-                    {
-                        var Options = context
-                            .HttpContext
-                            .RequestServices
-                            .GetRequiredService<IOptions<IdentityOptions>>()
-                            .Value;
-
-                        var Scopes = context.Request.GetScopes();
-
-                        var Identity = new ClaimsIdentity(
-                            OpenIdConnectServerDefaults.AuthenticationScheme,
-                            Options.ClaimsIdentity.UserNameClaimType,
-                            Options.ClaimsIdentity.RoleClaimType
-                        );
-
-                        Identity.AddClaim(
-                            ClaimTypes.Name,
-                            "me",
-                            OpenIdConnectConstants.Destinations.AccessToken,
-                            OpenIdConnectConstants.Destinations.IdentityToken
-                        );
-
-                        /// Dummy examples of scope to claim mappings
-                        if (Scopes.Contains(OpenIdConnectConstants.Scopes.Profile))
-                        {
-                            Identity.AddClaim(
-                                ClaimTypes.NameIdentifier,
-                                "12345678",
-                                OpenIdConnectConstants.Destinations.AccessToken,
-                                OpenIdConnectConstants.Destinations.IdentityToken
-                            );
-                        }
-
-                        if (Scopes.Contains(OpenIdConnectConstants.Scopes.Email))
-                        {
-                            Identity.AddClaim(
-                                ClaimTypes.Email,
-                                "me",
-                                OpenIdConnectConstants.Destinations.AccessToken,
-                                OpenIdConnectConstants.Destinations.IdentityToken
-                            );
-                        }
-
-                        // Create a new authentication ticket holding the user identity.
-                        var Ticket = new AuthenticationTicket(
-                            new ClaimsPrincipal(Identity),
-                            new AuthenticationProperties(),
-                            context.Options.AuthenticationScheme
-                        );
-
-                        Ticket.SetResources(
-                            context.Request.GetResources()
-                        );
-                        Ticket.SetScopes(
-                            Scopes
-                        );
-
-                        context.Validate(Ticket);
-
-                        return Task.FromResult(0);
-                    }
-                };
+                options.Provider = new BasicOpenIdConnectServerProvider();
             });
 
 
@@ -178,12 +95,16 @@ namespace Five
 
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .AddCommandLine(args)
+                .Build();
+
             var application = new WebHostBuilder()
+                .UseConfiguration(config)
                 .ConfigureLogging(options => options.AddDebug(minLevel: LogLevel.Trace))
                 .ConfigureLogging(options => options.AddConsole(minLevel: LogLevel.Trace))
-                .UseDefaultHostingConfiguration(args)
-                .UseIISPlatformHandlerUrl()
-                .UseKestrel() // http://tostring.it/2016/01/12/Using-Kestrel-with-ASPNET-5/
+                .UseKestrel() 
+		        .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();
 

@@ -1,12 +1,16 @@
 ﻿{
-  
-  "version": "1.0.0-*",
+  "version": "1.0.1-*",
 
-  "compilationOptions": {
-    "emitEntryPoint": true
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "debugType": "portable"
   },
 
   "dependencies": {
+    "Microsoft.NETCore.App": {
+      "version": "1.0.0-rc2-3002702"
+    },
+
     "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0-*",
 
     "AspNet.Security.OpenIdConnect.Server": "1.0.0-*",
@@ -15,40 +19,21 @@
     "Microsoft.AspNetCore.Diagnostics": "1.0.0-*",
     "Microsoft.AspNetCore.Mvc": "1.0.0-*",
     "Microsoft.AspNetCore.Hosting": "1.0.0-*",
-    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*",
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-*",
     "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
     "Microsoft.AspNetCore.Identity": "1.0.0-*",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0-*",
 
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-*",
     "Microsoft.Extensions.Logging.Console": "1.0.0-*",
     "Microsoft.Extensions.Logging.Debug": "1.0.0-*"
   },
 
-  "commands": {
-    "web": "Five"
-  },
-
   "frameworks": {
-    "net451": {
-      "frameworkAssemblies": {
-        "System.ComponentModel": {
-          "type": "build" 
-        },
-        "System.Runtime": {
-          "type": "build",
-          "version": "4.0.10.0"
-        }
-      }
-    },
-
-    "netstandardapp1.5": {
-      "dependencies": {
-        "NETStandard.Library": "1.5.0-*"
-      },
-
+    "netcoreapp1.0": {
       "imports": [
         "dnxcore50",
         "portable-net451+win8"
@@ -56,20 +41,32 @@
     }
   },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules",
-    "Scripts"
-  ],
+  "runtimes": {
+    "win10-x64": { },
+    "ubuntu.14.04-x64": { }
+  },
 
-  "publishExclude": [
-    "**.user",
-    "**.vspscc"
-  ],
+  "publishOptions": {
+    "include": [
+      "wwwroot",
+      "appsettings.json",
+      "hosting.json",
+      "web.config"
+    ]
+  },
+
+  "tools": {
+    "Microsoft.AspNetCore.Server.IISIntegration.Tools": {
+      "version": "1.0.0-*",
+      "imports": "portable-net45+wp80+win8+wpa81+dnxcore50"
+    }
+  },
 
   "scripts": {
     "prebuild": [
       "D:\\software\\Node\\5.2.0\\node node_modules\\gulp\\bin\\gulp.js default"
-    ]
+    ],
+
+    "postpublish": "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%"
   }
 }
