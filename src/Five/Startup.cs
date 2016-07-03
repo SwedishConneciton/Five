@@ -17,14 +17,19 @@ namespace Five
     {
         public IConfigurationRoot Configuration { get; set; }
 
+        ILogger<Startup> Logger { get; set; }
 
-	public Startup(IHostingEnvironment env)
-	{
+
+
+        public Startup(IHostingEnvironment env, ILogger<Startup> logger)
+	    {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
+
+            Logger = logger;
         }
 
         public void ConfigureServices(IServiceCollection services)
