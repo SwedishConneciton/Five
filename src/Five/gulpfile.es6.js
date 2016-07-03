@@ -6,6 +6,7 @@
  */
 
 import gulp from 'gulp';
+import mocha from 'gulp-mocha';
 import runSequence from 'run-sequence';
 import source from 'vinyl-source-stream';
 import babelify from 'babelify';
@@ -54,6 +55,25 @@ gulp.task('bundle', () => {
         )
         .pipe(
             gulp.dest('wwwroot/scripts')
+        );
+});
+
+
+gulp.task('test', () => {
+    return gulp
+        .src(
+            ['Playground/**/*.Test.js']
+        )
+        .pipe(
+            mocha({
+                reporter: 'spec'
+            })
+        )
+        .on(
+            'error',
+            () => {
+                console.log('error');
+            }
         );
 });
 
